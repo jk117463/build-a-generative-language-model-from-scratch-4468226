@@ -45,5 +45,5 @@ text_data = "This is a simple example of a Markov chain. Markov chains are used 
 mc.train(text_data)
 
 # Generate text using a prompt
-generated_text = mc.generate("This is", length=20)
+generated_text = mc.generate("This", length=10)
 print(generated_text)
