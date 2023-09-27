@@ -39,14 +39,23 @@ class NaiveBayesClassifier:
 
     def classify(self, text):
         tokens = self.tokenize(text)
-        pos = []
-        neg = []
+        pos = 1.0  # Initialize with 1 to prevent multiplication by zero
+        neg = 1.0  # Initialize with 1 to prevent multiplication by zero
 
         for token in tokens:
-            pos.append(self.pos_counter[token]/self.sample_count)
-            neg.append(self.neg_counter[token]/self.sample_count)
-            
-        
+            pos_probability = (self.pos_counter[token] + 1) / (sum(self.pos_counter.values()) + len(self.pos_counter))
+            neg_probability = (self.neg_counter[token] + 1) / (sum(self.neg_counter.values()) + len(self.neg_counter))
+
+            pos *= pos_probability
+            neg *= neg_probability
+
+        pos *= len(self.mapping["pos"]) / self.sample_count
+        neg *= len(self.mapping["neg"]) / self.sample_count
+
+        if pos > neg:
+            return "pos"
+        else:
+            return "neg"
         
 
 
@@ -59,3 +68,8 @@ show_hints = False
 def get_sentiment(text):
     cl = NaiveBayesClassifier(post_comments_with_labels)
     return cl.classify(text)
+
+# Test the classifier
+test_text = "I love this post."
+sentiment = get_sentiment(test_text)
+print(f"Sentiment: {sentiment}")
